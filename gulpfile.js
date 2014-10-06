@@ -12,8 +12,11 @@ var gutil = require('gulp-util');
 var notify = require('gulp-notify');
 
 
+var scriptFile = './src/js/app.js';
+var scriptDist = 'dist/js';
+
 gulp.task('default', ['server', 'watch']);
-gulp.task('compile', ['scripts', 'css', 'html', 'assets']);
+gulp.task('compile', ['minified_scripts', 'css', 'html', 'assets']);
 gulp.task('server', function() {
     return browserSync.init(['./dist/**/*'], {
         server: {
@@ -28,6 +31,9 @@ gulp.task('watchCSS', function() {
 gulp.task('watchHtml', function() {
     return gulp.watch('src/index.html', ['html']);
 });
+gulp.task('minified_scripts', function() {
+    return scripts(browserify, true);
+});
 gulp.task('scripts', function() {
     return scripts(browserify);
 });
@@ -35,11 +41,17 @@ gulp.task('watchScripts', function() {
     return scripts(watchify);
 });
 
-function scripts(handler) {
-    var scriptFile = './src/js/app.js';
+function scripts(handler, minify) {
     var bundler = handler(scriptFile);
 
     bundler.transform(reactify);
+
+    if(minify) {
+        bundler.plugin('minifyify', {
+            map: 'bundle.map.json',
+            output: scriptDist + '/bundle.map.json'
+        });
+    }
 
     var rebundle = function() {
         var stream = bundler.bundle({
@@ -54,7 +66,7 @@ function scripts(handler) {
             title: 'Browserify error'
         }));
 
-        return stream.pipe(source('bundle.js')).pipe(gulp.dest('dist/js'));
+        return stream.pipe(source('bundle.js')).pipe(gulp.dest(scriptDist));
     };
     bundler.on('update', rebundle);
     return rebundle();
