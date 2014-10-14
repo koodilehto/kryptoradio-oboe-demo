@@ -18,18 +18,10 @@ module.exports = React.createClass({
     var data = this.props.data,
         size = { width: this.props.width, height: this.props.height };
 
-    var max = _.chain(data)
-      .zip()
-      .map(function(values) {
-        return _.reduce(values, function(memo, value) {
-            return Math.max(memo, value.y);
-        }, 0);
-      })
-      .max()
-      .value();
+    var max = _.max(_.flatten(_.values(data)), function(o) {return o.y;}).y;
 
     var xScale = d3.scale.linear()
-      .domain([0, data.length])
+      .domain([0, _.max(data, function(arr) {return arr.length}).length])
       .range([0, this.props.width]);
 
     var yScale = d3.scale.linear()
@@ -38,7 +30,9 @@ module.exports = React.createClass({
 
     return (
       <Chart width={this.props.width} height={this.props.height}>
-        <DataSeries data={data} size={size} xScale={xScale} yScale={yScale} ref="data" color="cornflowerblue" />
+        <DataSeries data={data.requests} size={size} xScale={xScale} yScale={yScale} ref="requests" color="cornflowerblue" />
+        <DataSeries data={data.bids} size={size} xScale={xScale} yScale={yScale} ref="bids" color="red" />
+        <DataSeries data={data.trades} size={size} xScale={xScale} yScale={yScale} ref="trades" color="green" />
       </Chart>
     );
   }
