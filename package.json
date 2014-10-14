@@ -1,6 +1,6 @@
 {
   "name": "kryptoradio-oboe-demo",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "React + Oboe demo",
   "dependencies": {
     "d3": "^3.4.12",
