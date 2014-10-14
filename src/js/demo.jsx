@@ -2,13 +2,16 @@
 var React = require('react');
 var oboe = require('oboe');
 
+var LineChart = require('./linechart.jsx');
+
 
 module.exports  = React.createClass({
     displayName: 'DemoPage',
 
     getInitialState: function() {
         return {
-            exchanges: []
+            exchanges: [],
+            data: []
         };
     },
     componentDidMount: function() {
@@ -18,27 +21,38 @@ module.exports  = React.createClass({
            .node('*', function(arr) {
                 if(Array.isArray(arr) && Array.isArray(arr[0])) {
                     arr = arr[0];
+
+                    var priceLevel = arr[4];
                     var o = {
                         marketName: arr[0],
                         securityName: arr[1],
                         currency: arr[2],
                         actionType: arr[3],
-                        priceLevel: arr[4],
+                        priceLevel: priceLevel,
                         amount: parseFloat(arr[5])
                     };
 
                     console.log('received a fragment', o);
 
-                    that.setState({exchanges: that.state.exchanges.concat([o])});
+                    that.setState({
+                        exchanges: that.state.exchanges.concat([o]),
+                        data: that.state.data.concat({
+                            x: that.state.data.length,
+                            y: priceLevel
+                        })
+                    });
                 }
            });
     },
     render: function() {
         var exchanges = this.state.exchanges;
+        var data = this.state.data;
 
         return (
             <div>
                 <h1>Exchanges</h1>
+
+                <LineChart data={data} />
 
                 <table className="exchanges">
                     <thead>

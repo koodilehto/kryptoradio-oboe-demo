@@ -3,8 +3,10 @@
   "version": "0.1.0",
   "description": "React + Oboe demo",
   "dependencies": {
+    "d3": "^3.4.12",
     "oboe": "^2.0.2",
-    "react": "0.10.0"
+    "react": "0.10.0",
+    "underscore": "^1.7.0"
   },
   "devDependencies": {
     "browser-sync": "1.1.2",
